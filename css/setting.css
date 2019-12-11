@@ -1,3 +1,41 @@
+@font-face {
+    font-family: Poppins;
+    src: url(./font/Poppins/Poppins-Regular.ttf);
+}
+html{
+    font-family:Poppins ;
+}
+
+body{
+    background-color: #22252c;
+    box-sizing: border-box;
+}
+
+a {
+    text-decoration: none;
+    color: inherit;
+}
+
 img{
     width:100%;
 }
+
+input,
+textarea {
+  border: none;
+}
+
+input:focus,
+textarea {
+  outline: none ;
+}
+
+button {
+ 
+    text-decoration: none;
+    border: none;
+    cursor: pointer;
+    outline: none;
+  }
+  
+

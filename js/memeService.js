@@ -4,7 +4,22 @@
 const gKeywords = { 'happy': 12, 'funny puk': 1 }
 const gImgs = [{ id: 1, url: 'img/003.jpg', keywords: ['trump', 'angry', 'speach'] },
 { id: 2, url: 'img/004.jpg', keywords: ['dog', 'cute', 'happy', 'love', 'kiss'] },
-{ id: 3, url: 'img/005.jpg', keywords: ['dog', 'baby', 'happy', 'smile'] }];
+{ id: 3, url: 'img/005.jpg', keywords: ['dog', 'baby', 'happy', 'smile'] },
+{ id: 4, url: 'img/5.jpg', keywords: ['sad', 'baby'] },
+{ id: 5, url: 'img/006.jpg', keywords: ['cat', 'sleep'] },
+{ id: 6, url: 'img/8.jpg', keywords: ['hat', 'clown', 'man', 'smile'] },
+{ id: 7, url: 'img/9.jpg', keywords: ['lol', 'baby', 'happy', 'smile'] },
+{ id: 8, url: 'img/12.jpg', keywords: ['tv show', 'old', 'happy', 'smile'] },
+{ id: 9, url: 'img/Ancient-Aliens.jpg', keywords: ['ancient', 'history', 'happy', 'smile'] },
+{ id: 10, url: 'img/img5.jpg', keywords: ['kid', 'black', 'happy', 'smile'] },
+{ id: 11, url: 'img/img11.jpg', keywords: ['president', 'black', 'happy', 'smile', 'obama'] },
+{ id: 12, url: 'img/img12.jpg', keywords: ['kiss', 'black', 'love', 'smile', 'happy']},
+{id: 13, url: 'img/leo.jpg', keywords: ['wine', 'glass', 'happy', 'smile','actor']},
+{id: 14, url: 'img/meme1.jpg', keywords: ['sunglasess', 'black', 'sad', 'actor']},
+{id: 16, url: 'img/One-Does-Not-Simply.jpg', keywords: ['actor']},
+{id: 17, url: 'img/patrick.jpg', keywords: ['old']},
+{id: 18, url: 'img/putin.jpg', keywords: ['putin','president','russia']},
+{id: 19, url: 'img/X-Everywhere.jpg', keywords: ['toy','story','movie','game']}];
 const gMeme = {
     selectedImgId: 1, selectedTxtIdx: 0,
     txts: []
@@ -26,9 +41,10 @@ const resizeCanvas = () => {
 const setGlobalVar = (imgID) => {
     gCanvas = document.querySelector('#my-canvas');
     gCtx = gCanvas.getContext('2d')
+
     gImg = null
     gMeme.selectedImgId = imgID
-    gMeme.selectedTxtIdx=0
+    gMeme.selectedTxtIdx = 0
 }
 
 const findImgById = (imgID) => {
@@ -50,10 +66,12 @@ const drawImg = (imgID) => {
         gCtx.drawImage(gImg, 0, 0, gCanvas.width, gCanvas.height)
     else {
         gImg = new Image()
+
         let img = findImgById(imgID)
         gImg.onload = () => {
             gCtx.drawImage(gImg, 0, 0, gCanvas.width, gCanvas.height)
         };
+
         gImg.src = img.url
     }
     // NOTE: the proportion of the image - should be as the canvas,
@@ -67,6 +85,8 @@ const changeTxt = (line) => {
 const addText = () => {
     gMeme.selectedTxtIdx = gMeme.txts.length
     let newTxt = createTxt()
+    if (gMeme.selectedTxtIdx === 0) newTxt.offsetY = 0 + newTxt.size
+    else if (gMeme.selectedTxtIdx === 1) newTxt.offsetY = gCanvas.height
     gMeme.txts.push(newTxt)
 }
 
@@ -137,10 +157,11 @@ const changeSelectedTxtIdx = () => {
     gMeme.selectedTxtIdx = (gMeme.selectedTxtIdx + 1) % gMeme.txts.length
 }
 
-const deleteTxt=()=>{
-    gMeme.txts.splice(gMeme.selectedTxtIdx,1)
+const deleteTxt = () => {
+    gMeme.txts.splice(gMeme.selectedTxtIdx, 1)
 }
 
-const getCurrentTxt=()=>{
+const getCurrentTxt = () => {
     return gMeme.txts[gMeme.selectedTxtIdx].line
 }
+

@@ -1,6 +1,11 @@
+.canvas-wrap{
+    display: none;
+    max-width: 1280px;
+}
+
 .canvas-container{
-    background-color: lightgoldenrodyellow;
     padding: 10px;
+    
 }
 #my-canvas {
     margin: 20px auto;

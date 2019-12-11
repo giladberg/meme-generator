@@ -14,16 +14,25 @@
 </head>
 
 <body onload="initGallery()">
-    <div class="gallery-container flex column">
-        <nav class="main-nav flex">
-            <input type="text" placeholder="search">
-            <div class="keyWords">fdf</div>
-            <button>more</button>
+    <header class="main-header flex align-center">
+            <div class="main-logo flex-grow ">Meme Generator</div>
+            <nav class="main-nav">
+                    <ul class="main-menu flex clean-list align-baseline ">
+                        <li class=""><a class="flex align-center justify-center active" href="#">Gallery</a></li>
+                        <li class=""><a class="flex align-center justify-center " href="#">About</a></li>
+                    </ul>
+                </nav>
+    </header>
+    <div class="gallery-container flex column  align-center">
+        <nav class="second-nav flex align-center">
+            <input class="flex-grow" type="text" placeholder="search">
+            <div class="keyWords flex-grow flex align-center">fdf</div>
+            <button class="more">More</button>
         </nav>
-        <div class="gallery-content flex wrap">
+        <div class="gallery-content flex wrap justify-flex-start">
         </div>
     </div>
-    <div class="canvas-wrap">
+    <div class="canvas-wrap container">
         <div class="controllers-container">
             <input type="text" placeholder="please add text" onkeyup="onChangeText()" id="text">
             <div class="general-btn-container">
@@ -37,9 +46,13 @@
                 <button onclick="onChangeFontSize(1)">+</button>
                 <button onclick="onChangeFontSize(-1)">-</button>
             </div>
+            <div class="bottom-btn-container">
+                    <a href="#" onclick="onDownload(this)" download="">Download</a>
+                <button onclick="onShare()">Share</button>
+            </div>
         </div>
         <div class="canvas-container">
-            <canvas id="my-canvas" width="500" height="500">
+            <canvas id="my-canvas" width="500" height="500"  >
                 Update your browser to enjoy canvas!
             </canvas>
         </div>
