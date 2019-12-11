@@ -7,7 +7,7 @@ const gImgs = [{ id: 1, url: 'img/003.jpg', keywords: ['trump', 'angry', 'speach
 { id: 3, url: 'img/005.jpg', keywords: ['dog', 'baby', 'happy', 'smile'] }];
 const gMeme = {
     selectedImgId: 1, selectedTxtIdx: 0,
-    txts: [{ line: 'I never eat Falafel', size: 20, align: 'left', color: 'red', offsetX: 40, offsetY: 30 }]
+    txts: []
 }
 let gCanvas
 let gCtx
@@ -28,6 +28,7 @@ const setGlobalVar = (imgID) => {
     gCtx = gCanvas.getContext('2d')
     gImg = null
     gMeme.selectedImgId = imgID
+    gMeme.selectedTxtIdx=0
 }
 
 const findImgById = (imgID) => {
@@ -59,35 +60,43 @@ const drawImg = (imgID) => {
     // otherwise the image gets distorted
 }
 
-const addTxt = (line, size = 20, align = 'left', color = 'black', offsetX = gCanvas.width / 2, offsetY = gCanvas.height / 2) => {
+const changeTxt = (line) => {
     gMeme.txts[gMeme.selectedTxtIdx].line = line
-    gMeme.txts[gMeme.selectedTxtIdx].size = size
-    gMeme.txts[gMeme.selectedTxtIdx].align = align
-    gMeme.txts[gMeme.selectedTxtIdx].color = color
-    gMeme.txts[gMeme.selectedTxtIdx].offsetX = offsetX = offsetX
-    gMeme.txts[gMeme.selectedTxtIdx].offsetY = offsetY
 }
 
-const drawText = (txt, size, align, color, x, y) => {
+const addText = () => {
+    gMeme.selectedTxtIdx = gMeme.txts.length
+    let newTxt = createTxt()
+    gMeme.txts.push(newTxt)
+}
+
+const createTxt = (line = '', size = 20, align = 'left', color = 'white', stroke = 'black', fontFamely = 'impact', offsetX = gCanvas.width / 2, offsetY = gCanvas.height / 2) => {
+    return { line, size, align, color, stroke, fontFamely, offsetX, offsetY }
+}
+
+
+
+const drawText = (txt, size, align, color, stroke, fontFamely, x, y) => {
     gCtx.save()
-    // gCtx.strokeStyle = color
+    gCtx.strokeStyle = stroke
     gCtx.fillStyle = color
-    gCtx.font = `${size}px Arial`;
+    gCtx.font = `${size}px ${fontFamely}`;
     gCtx.textAlign = align;
-    // gCtx.lineWidth = 3
-    // gCtx.strokeText(txt, x, y);
+    gCtx.lineWidth = 2;
+    gCtx.strokeText(txt, x, y);
     gCtx.fillText(txt, x, y);
     gCtx.restore()
 }
 
-const drawTextBG = (txt, font, align, color, x, y) => {
+const drawTextBG = (txt, font, align, color, stroke, fontFamely, x, y) => {
+
     /// lets save current state as we make a lot of changes        
     gCtx.save();
     /// set font
-    gCtx.font = `${font}px Arial`;
+    gCtx.font = `${font}px ${fontFamely}`;
     gCtx.textAlign = align;
     /// draw text from top - makes life easier at the moment
-    gCtx.textBaseline = 'top';
+    gCtx.textBaseline = 'Bottom';
     /// color for background
     gCtx.fillStyle = 'transparent';
     gCtx.strokeStyle = 'red'
@@ -95,13 +104,16 @@ const drawTextBG = (txt, font, align, color, x, y) => {
     let width = gCtx.measureText(txt).width;
     /// draw background rect assuming height of font
     gCtx.beginPath();
-    gCtx.rect(x, y, width, parseInt(font, 10))
+    gCtx.rect(x, y - font, width, parseInt(font, 10))
     //gCtx.fillRect(x, y, width, parseInt(font, 10));
     gCtx.stroke()
     gCtx.closePath()
     /// text color
     gCtx.fillStyle = color;
+    gCtx.strokeStyle = stroke
     /// draw text on top
+    gCtx.lineWidth = 2;
+    gCtx.strokeText(txt, x, y);
     gCtx.fillText(txt, x, y);
     /// restore original state
     gCtx.restore();
@@ -117,4 +129,18 @@ const changeLine = (num) => {
     gMeme.txts[index].offsetY += num
     if (gMeme.txts[index].offsetY < 0) gMeme.txts[gMeme.selectedTxtIdx].offsetY = 0
     if (gMeme.txts[index].offsetY > gCanvas.height + gMeme.txts[index].size) gMeme.txts[index].offsetY = gCanvas.height + gMeme.txts[index].size
+}
+
+const getCurrSelectedTxtIdx = () => { return gMeme.selectedTxtIdx }
+
+const changeSelectedTxtIdx = () => {
+    gMeme.selectedTxtIdx = (gMeme.selectedTxtIdx + 1) % gMeme.txts.length
+}
+
+const deleteTxt=()=>{
+    gMeme.txts.splice(gMeme.selectedTxtIdx,1)
+}
+
+const getCurrentTxt=()=>{
+    return gMeme.txts[gMeme.selectedTxtIdx].line
 }

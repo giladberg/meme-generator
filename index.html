@@ -27,7 +27,9 @@
         <div class="controllers-container">
             <input type="text" placeholder="please add text" onkeyup="onChangeText()" id="text">
             <div class="general-btn-container">
-                <button>add text</button>
+                <button onclick="onDelete()">delete</button>
+                <button onclick="onAddText()">add text</button>
+                <button onclick="onSwitchText()">switch text</button>
                 <button onclick="onChangeLine(-10)">Up</button>
                 <button onclick="onChangeLine(10)">Down</button>
             </div>
