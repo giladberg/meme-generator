@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,16 +8,46 @@
     <link rel="stylesheet" type="text/css" href="css/normalize.css">
     <link rel="stylesheet" type="text/css" href="css/helpers.css">
     <link rel="stylesheet" type="text/css" href="css/canvas.css">
+    <link rel="stylesheet" type="text/css" href="css/gallery.css">
+    <link rel="stylesheet" type="text/css" href="css/setting.css">
     <title>Meme Generator</title>
 </head>
-<body>
-    <div class="canvas-container">
-        <canvas id="my-canvas" width="500" height="500">
-            Update your browser to enjoy canvas!
-        </canvas>
+
+<body onload="initGallery()">
+    <div class="gallery-container flex column">
+        <nav class="main-nav flex">
+            <input type="text" placeholder="search">
+            <div class="keyWords">fdf</div>
+            <button>more</button>
+        </nav>
+        <div class="gallery-content flex wrap">
+        </div>
     </div>
+    <div class="canvas-wrap">
+        <div class="controllers-container">
+            <input type="text" placeholder="please add text" onkeyup="onChangeText()" id="text">
+            <div class="general-btn-container">
+                <button>add text</button>
+                <button onclick="onChangeLine(-10)">Up</button>
+                <button onclick="onChangeLine(10)">Down</button>
+            </div>
+            <div class="text-btn-container">
+                <button onclick="onChangeFontSize(1)">+</button>
+                <button onclick="onChangeFontSize(-1)">-</button>
+            </div>
+        </div>
+        <div class="canvas-container">
+            <canvas id="my-canvas" width="500" height="500">
+                Update your browser to enjoy canvas!
+            </canvas>
+        </div>
+    </div>
+
     <script src="js/utils.js"></script>
     <script src="js/memeService.js"></script>
     <script src="js/memeController.js"></script>
+    <script src="js/galleryController.js"></script>
+
 </body>
+
 </html>
