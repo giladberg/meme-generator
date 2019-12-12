@@ -7,21 +7,13 @@ const initCanvas = (imgID) => {
     drawImg(imgID)
     addText()
     renderCanvas()
-    resizeCanvas()
-    window.addEventListener('resize',
-        () => {
-            //     gCanvas.width = window.innerWidth - 50
-            //  gCanvas.height = window.innerHeight - 100;
-            //  renderCanvas()
-        })
 }
 
-const renderCanvas = () => {
-    // const img= findImgById(1)
+const renderCanvas = (downloadMode) => {
     const txts = getTxts()
     drawImg()
     txts.forEach((txt, index) => {
-        if (getCurrSelectedTxtIdx() === index) drawTextBG(txt.line, txt.size, txt.align, txt.color, txt.stroke,txt.strokeSize, txt.fontFamely, txt.offsetX, txt.offsetY)
+        if (getCurrSelectedTxtIdx() === index && !downloadMode) drawTextBG(txt.line, txt.size, txt.align, txt.color, txt.stroke,txt.strokeSize, txt.fontFamely, txt.offsetX, txt.offsetY)
         else drawText(txt.line, txt.size, txt.align, txt.color, txt.stroke,txt.strokeSize, txt.fontFamely, txt.offsetX, txt.offsetY)
     })
 
@@ -66,7 +58,6 @@ const onSwitchText = () => {
 const onDelete = () => {
     deleteTxt()
     onSwitchText()
-    //  changeSelectedTxtIdx()
     renderCanvas()
 }
 const onChangeColor = () => {
@@ -82,9 +73,11 @@ const onChangeStrokeColor=()=>{
 }
 
 const onDownload = (elLink) => {
+            renderCanvas(true)
           const data = gCanvas.toDataURL()
           elLink.href = data
           elLink.download = 'my-meme.png'
+          renderCanvas()
 }
 
 const onChangeFontFamely=()=>{
@@ -111,8 +104,6 @@ const onPublish=(ev)=>{
 function uploadImg(elForm, ev) {
     ev.preventDefault();
     document.getElementById('imgData').value = gCanvas.toDataURL("image/jpeg");
-
-    // A function to be called if request succeeds
     function onSuccess(uploadedImgUrl) {
         uploadedImgUrl = encodeURIComponent(uploadedImgUrl)
         document.querySelector('.share-container').innerHTML = `
@@ -135,7 +126,6 @@ function doUploadImg(elForm, onSuccess) {
     })
     .then(onSuccess)
     .catch(function (err) {
-        console.error(err)
     })
 }
 

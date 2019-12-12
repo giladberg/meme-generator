@@ -10,7 +10,7 @@ const  KeyWordsToRender=()=>{
     const keyWords = document.querySelector('.keyWords')
     let topKeyWords= getTopKeyWords()
     const strSpans = topKeyWords.map( (keyWord,i)=> {
-        let fontSize=(30-i*5)
+        let fontSize=(27-i*5)
         return `<span style="font-size:${fontSize}px; cursor:pointer;" onclick="setFillterdByClick('${keyWord.value}')">${keyWord.value} &nbsp; </span>`;
     })
     keyWords.innerHTML = strSpans.join('');
@@ -32,6 +32,11 @@ const onSelectedPicture=(imgID)=>{
     document.querySelector('.canvas-wrap').style="display:flex";
     document.querySelector('.gallery-container').style="display:none;";
     initCanvas(imgID)
+}
+
+const backToGallery=()=>{
+    document.querySelector('.canvas-wrap').style="display:none";
+    document.querySelector('.gallery-container').style="display:flex;";
 }
 
 const onToggleMenu=()=>{

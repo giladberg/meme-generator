@@ -32,11 +32,8 @@ let gFillteredKeyWords="";
 
 const resizeCanvas = () => {
     const elContainer = document.querySelector('.canvas-container');
-    // Note: changing the canvas dimension this way clears the canvas
     gCanvas.width = elContainer.offsetWidth - 100
     gCanvas.height = elContainer.offsetHeight - 100
-
-    // TODO: redraw..
 }
 
 const setGlobalVar = (imgID) => {
@@ -75,8 +72,6 @@ const getFillterdKeyWords=(imgs)=>{
 
 
 const drawImg = (imgID) => {
-    // const img = document.querySelector('img');
-    // gCtx.drawImage(img, 0, 0, gCanvas.width, gCanvas.height)
     if (gImg)
         gCtx.drawImage(gImg, 0, 0, gCanvas.width, gCanvas.height)
     else {
@@ -89,8 +84,6 @@ const drawImg = (imgID) => {
 
         gImg.src = img.url
     }
-    // NOTE: the proportion of the image - should be as the canvas,
-    // otherwise the image gets distorted
 }
 
 const changeTxt = (line) => {
@@ -123,34 +116,23 @@ const drawText = (txt, size, align, color, stroke,strokeSize, fontFamely, x, y) 
     gCtx.restore()
 }
 
-const drawTextBG = (txt, font, align, color, stroke,strokeSize, fontFamely, x, y) => {
-
-    /// lets save current state as we make a lot of changes        
+const drawTextBG = (txt, font, align, color, stroke,strokeSize, fontFamely, x, y) => {       
     gCtx.save();
-    /// set font
     gCtx.font = `${font}px ${fontFamely}`;
     gCtx.textAlign = align;
-    /// draw text from top - makes life easier at the moment
     gCtx.textBaseline = 'Bottom';
-    /// color for background
     gCtx.fillStyle = 'transparent';
     gCtx.strokeStyle = 'red'
-    /// get width of text
     let width = gCtx.measureText(txt).width;
-    /// draw background rect assuming height of font
     gCtx.beginPath();
     gCtx.rect(x-(font*4.5), y - font, width+(font*5), font)
-    //gCtx.fillRect(x, y, width, parseInt(font, 10));
     gCtx.stroke()
     gCtx.closePath()
-    /// text color
     gCtx.fillStyle = color;
     gCtx.strokeStyle = stroke
-    /// draw text on top
     gCtx.lineWidth = strokeSize;
     gCtx.strokeText(txt, x, y);
     gCtx.fillText(txt, x, y);
-    /// restore original state
     gCtx.restore();
 }
 
