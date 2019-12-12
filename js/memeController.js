@@ -7,12 +7,13 @@ const initCanvas = (imgID) => {
     drawImg(imgID)
     addText()
     renderCanvas()
-    // resizeCanvas()
-    // window.addEventListener('resize',
-    //     () => {
-    //          gCanvas.width = window.innerWidth - 50
-    //          gCanvas.height = window.innerHeight - 100;
-    //     })
+    resizeCanvas()
+    window.addEventListener('resize',
+        () => {
+            //     gCanvas.width = window.innerWidth - 50
+            //  gCanvas.height = window.innerHeight - 100;
+            //  renderCanvas()
+        })
 }
 
 const renderCanvas = () => {
@@ -20,8 +21,8 @@ const renderCanvas = () => {
     const txts = getTxts()
     drawImg()
     txts.forEach((txt, index) => {
-        if (getCurrSelectedTxtIdx() === index) drawTextBG(txt.line, txt.size, txt.align, txt.color, txt.stroke, txt.fontFamely, txt.offsetX, txt.offsetY)
-        else drawText(txt.line, txt.size, txt.align, txt.color, txt.stroke, txt.fontFamely, txt.offsetX, txt.offsetY)
+        if (getCurrSelectedTxtIdx() === index) drawTextBG(txt.line, txt.size, txt.align, txt.color, txt.stroke,txt.strokeSize, txt.fontFamely, txt.offsetX, txt.offsetY)
+        else drawText(txt.line, txt.size, txt.align, txt.color, txt.stroke,txt.strokeSize, txt.fontFamely, txt.offsetX, txt.offsetY)
     })
 
 }
@@ -68,10 +69,75 @@ const onDelete = () => {
     //  changeSelectedTxtIdx()
     renderCanvas()
 }
+const onChangeColor = () => {
+    let elColor = document.querySelector('#color')
+    setColor(elColor.value)
+    renderCanvas()
+}
+
+const onChangeStrokeColor=()=>{
+    let elStrokeColor = document.querySelector('#stroke-color')
+    setStrokeColor(elStrokeColor.value)
+    renderCanvas()
+}
 
 const onDownload = (elLink) => {
-        //   const data = photo
-        //   elLink.href = data
-        //   elLink.download = 'my-meme.png'
+          const data = gCanvas.toDataURL()
+          elLink.href = data
+          elLink.download = 'my-meme.png'
 }
+
+const onChangeFontFamely=()=>{
+    let elFontFamely = document.querySelector('.font-famely')
+    setFontFamely(elFontFamely.value)
+    renderCanvas()
+}
+
+const onChangeStrokeSize=()=>{
+    toggleStroke()
+    renderCanvas()
+}
+
+const onChangeAling=(align)=>{
+    onChangeAlign(align)
+    renderCanvas()
+}
+
+const onPublish=(ev)=>{
+     ev.target.innerText=""
+}
+
+
+function uploadImg(elForm, ev) {
+    ev.preventDefault();
+    document.getElementById('imgData').value = gCanvas.toDataURL("image/jpeg");
+
+    // A function to be called if request succeeds
+    function onSuccess(uploadedImgUrl) {
+        uploadedImgUrl = encodeURIComponent(uploadedImgUrl)
+        document.querySelector('.share-container').innerHTML = `
+        <a class="btn" href="https://www.facebook.com/sharer/sharer.php?u=${uploadedImgUrl}&t=${uploadedImgUrl}" title="Share on Facebook" target="_blank" onclick="window.open('https://www.facebook.com/sharer/sharer.php?u=${uploadedImgUrl}&t=${uploadedImgUrl}'); return false;">
+           Share   
+        </a>`
+    }
+
+    doUploadImg(elForm, onSuccess);
+}
+
+function doUploadImg(elForm, onSuccess) {
+    var formData = new FormData(elForm);
+    fetch('http://ca-upload.com/here/upload.php', {
+        method: 'POST',
+        body: formData
+    })
+    .then(function (res) {
+        return res.text()
+    })
+    .then(onSuccess)
+    .catch(function (err) {
+        console.error(err)
+    })
+}
+
+
 

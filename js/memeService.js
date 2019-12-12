@@ -27,6 +27,7 @@ const gMeme = {
 let gCanvas
 let gCtx
 let gImg
+let gFillteredKeyWords="";
 
 
 const resizeCanvas = () => {
@@ -41,7 +42,6 @@ const resizeCanvas = () => {
 const setGlobalVar = (imgID) => {
     gCanvas = document.querySelector('#my-canvas');
     gCtx = gCanvas.getContext('2d')
-
     gImg = null
     gMeme.selectedImgId = imgID
     gMeme.selectedTxtIdx = 0
@@ -53,10 +53,25 @@ const findImgById = (imgID) => {
     });
 }
 
-const getGalleryData = () => { return gImgs }
+const getGalleryData = () => {
+    let imgs=gImgs 
+    imgs=getFillterdKeyWords(imgs)
+    return imgs
+}
 
 const getTxts = () => { return gMeme.txts }
 
+const setFillterdKeyWords=(input)=>{
+    gFillteredKeyWords=input;
+}
+
+const getFillterdKeyWords=(imgs)=>{
+    return imgs.filter(img=>{
+       for(let i=0;i<img.keywords.length;i++){
+           if(img.keywords[i].toLowerCase().includes(gFillteredKeyWords)) return img
+       }
+    })
+}
 
 
 const drawImg = (imgID) => {
@@ -90,25 +105,25 @@ const addText = () => {
     gMeme.txts.push(newTxt)
 }
 
-const createTxt = (line = '', size = 20, align = 'left', color = 'white', stroke = 'black', fontFamely = 'impact', offsetX = gCanvas.width / 2, offsetY = gCanvas.height / 2) => {
-    return { line, size, align, color, stroke, fontFamely, offsetX, offsetY }
+const createTxt = (line = '', size = 20, align = 'left', color = 'white', stroke = 'black',strokeSize=4, fontFamely = 'impact', offsetX = gCanvas.width / 2, offsetY = gCanvas.height / 2) => {
+    return { line, size, align, color, stroke,strokeSize ,fontFamely, offsetX, offsetY }
 }
 
 
 
-const drawText = (txt, size, align, color, stroke, fontFamely, x, y) => {
+const drawText = (txt, size, align, color, stroke,strokeSize, fontFamely, x, y) => {
     gCtx.save()
     gCtx.strokeStyle = stroke
     gCtx.fillStyle = color
     gCtx.font = `${size}px ${fontFamely}`;
     gCtx.textAlign = align;
-    gCtx.lineWidth = 2;
+    gCtx.lineWidth = strokeSize;
     gCtx.strokeText(txt, x, y);
     gCtx.fillText(txt, x, y);
     gCtx.restore()
 }
 
-const drawTextBG = (txt, font, align, color, stroke, fontFamely, x, y) => {
+const drawTextBG = (txt, font, align, color, stroke,strokeSize, fontFamely, x, y) => {
 
     /// lets save current state as we make a lot of changes        
     gCtx.save();
@@ -124,7 +139,7 @@ const drawTextBG = (txt, font, align, color, stroke, fontFamely, x, y) => {
     let width = gCtx.measureText(txt).width;
     /// draw background rect assuming height of font
     gCtx.beginPath();
-    gCtx.rect(x, y - font, width, parseInt(font, 10))
+    gCtx.rect(x-(font*4.5), y - font, width+(font*5), font)
     //gCtx.fillRect(x, y, width, parseInt(font, 10));
     gCtx.stroke()
     gCtx.closePath()
@@ -132,7 +147,7 @@ const drawTextBG = (txt, font, align, color, stroke, fontFamely, x, y) => {
     gCtx.fillStyle = color;
     gCtx.strokeStyle = stroke
     /// draw text on top
-    gCtx.lineWidth = 2;
+    gCtx.lineWidth = strokeSize;
     gCtx.strokeText(txt, x, y);
     gCtx.fillText(txt, x, y);
     /// restore original state
@@ -165,3 +180,62 @@ const getCurrentTxt = () => {
     return gMeme.txts[gMeme.selectedTxtIdx].line
 }
 
+const setColor=(color)=>{
+    gMeme.txts[gMeme.selectedTxtIdx].color=color;
+}
+
+const setStrokeColor=(color)=>{
+    gMeme.txts[gMeme.selectedTxtIdx].stroke=color;
+}
+
+const setFontFamely=(font)=>{
+    gMeme.txts[gMeme.selectedTxtIdx].fontFamely=font;
+}
+
+const toggleStroke=()=>{
+    if(gMeme.txts[gMeme.selectedTxtIdx].strokeSize===4)gMeme.txts[gMeme.selectedTxtIdx].strokeSize=0 
+    else gMeme.txts[gMeme.selectedTxtIdx].strokeSize=4
+}
+
+const onChangeAlign=(align)=>{
+    gMeme.txts[gMeme.selectedTxtIdx].align=align
+}
+
+const getTopKeyWords=()=>{
+    let keywords=getArrKeyWords()
+    let mapKeyWords=getMapKeyWords(keywords)
+    let keywordsMapAsArray=getMapToArray(mapKeyWords)
+    let sortedKeyWords=getSortedKeyWords(keywordsMapAsArray)
+    return sortedKeyWords.splice(0,5)
+}
+const getArrKeyWords=()=>{
+    let keywords=[]
+    gImgs.forEach(img=>{
+        keywords.push(...img.keywords)
+    })
+   return keywords
+}
+const getMapKeyWords=(keywords)=>{
+
+    let mapValues = keywords.reduce( (valueMap, value)=> {
+        valueMap[value] = (valueMap[value] || 0) + 1
+        return valueMap
+    }, {})
+   return mapValues
+}
+
+const getMapToArray=(mapKeyWords)=>{
+    let mapToArray=[]
+    for (let value in mapKeyWords){
+       let keyWord={value,count:mapKeyWords[value]}
+       mapToArray.push(keyWord)
+    }
+  return mapToArray
+}
+
+function getSortedKeyWords(keyWords) {
+    return keyWords.sort(function (keyword1, keyword2) {
+        return keyword1['count'] < keyword2['count'] ? 1 :
+            (keyword1['count'] > keyword2['count'] ? -1 : 0)
+    })
+}
