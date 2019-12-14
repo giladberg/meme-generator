@@ -54,10 +54,7 @@
     padding: 0;
     list-style-type: none;
 }
-:before {
-    display: block;
-    margin: 10px auto 24px;
-    position: relative;
-    text-align: center;
-    width: 100%;
-}
+
+
+.grab {cursor: -webkit-grab; cursor: grab;}
+.grabbing {cursor: -webkit-grabbing; cursor: grabbing;}

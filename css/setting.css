@@ -48,5 +48,13 @@ button {
     cursor: pointer;
     outline: none;
   }
+
+  :before {
+    display: block;
+    margin: 10px auto 24px;
+    position: relative;
+    text-align: center;
+    width: 100%;
+}
   
 

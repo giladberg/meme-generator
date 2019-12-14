@@ -1,7 +1,7 @@
 'use strict'
 
 const initCanvas = (imgID) => {
-  
+
     setGlobalVar(imgID)
 
     drawImg(imgID)
@@ -13,8 +13,8 @@ const renderCanvas = (downloadMode) => {
     const txts = getTxts()
     drawImg()
     txts.forEach((txt, index) => {
-        if (getCurrSelectedTxtIdx() === index && !downloadMode) drawTextBG(txt.line, txt.size, txt.align, txt.color, txt.stroke,txt.strokeSize, txt.fontFamely, txt.offsetX, txt.offsetY)
-        else drawText(txt.line, txt.size, txt.align, txt.color, txt.stroke,txt.strokeSize, txt.fontFamely, txt.offsetX, txt.offsetY)
+        if (getCurrSelectedTxtIdx() === index && !downloadMode) drawTextBG(txt.line, txt.size, txt.align, txt.color, txt.stroke, txt.strokeSize, txt.fontFamely, txt.offsetX, txt.offsetY)
+        else drawText(txt.line, txt.size, txt.align, txt.color, txt.stroke, txt.strokeSize, txt.fontFamely, txt.offsetX, txt.offsetY)
     })
 
 }
@@ -66,38 +66,38 @@ const onChangeColor = () => {
     renderCanvas()
 }
 
-const onChangeStrokeColor=()=>{
+const onChangeStrokeColor = () => {
     let elStrokeColor = document.querySelector('#stroke-color')
     setStrokeColor(elStrokeColor.value)
     renderCanvas()
 }
 
 const onDownload = (elLink) => {
-            renderCanvas(true)
-          const data = gCanvas.toDataURL()
-          elLink.href = data
-          elLink.download = 'my-meme.png'
-          renderCanvas()
+    renderCanvas(true)
+    const data = gCanvas.toDataURL()
+    elLink.href = data
+    elLink.download = 'my-meme.png'
+    renderCanvas()
 }
 
-const onChangeFontFamely=()=>{
+const onChangeFontFamely = () => {
     let elFontFamely = document.querySelector('.font-famely')
     setFontFamely(elFontFamely.value)
     renderCanvas()
 }
 
-const onChangeStrokeSize=()=>{
+const onChangeStrokeSize = () => {
     toggleStroke()
     renderCanvas()
 }
 
-const onChangeAling=(align)=>{
+const onChangeAling = (align) => {
     onChangeAlign(align)
     renderCanvas()
 }
 
-const onPublish=(ev)=>{
-     ev.target.innerText=""
+const onPublish = (ev) => {
+    ev.target.innerText = ""
 }
 
 
@@ -121,13 +121,37 @@ function doUploadImg(elForm, onSuccess) {
         method: 'POST',
         body: formData
     })
-    .then(function (res) {
-        return res.text()
-    })
-    .then(onSuccess)
-    .catch(function (err) {
-    })
+        .then(function (res) {
+            return res.text()
+        })
+        .then(onSuccess)
+        .catch(function (err) {
+        })
 }
 
+const onMouseDown = (event) => {
+    if (checkIfTxtInRange(event)) {
+        setDragMode(true)
+    }
+    renderCanvas()
+}
+const onMove = (event) => {
+    if (checkDragMode()) {
+        let elCanvas = document.querySelector('#my-canvas')
+        elCanvas.classList.remove('grab')
+        elCanvas.classList.add('grabbing')
+        moveTxt(event)
+        renderCanvas()
+    }
+}
 
-
+const onMouseUp = (event) => {
+    let elCanvas = document.querySelector('#my-canvas')
+    if (elCanvas.classList.contains('grabbing')) {
+        elCanvas.classList.remove('grabbing')
+        elCanvas.classList.add('grab')
+    }
+    setDragMode(false)
+    setPrevEvent(null)
+    renderCanvas()
+}
