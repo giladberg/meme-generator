@@ -58,3 +58,5 @@
 
 .grab {cursor: -webkit-grab; cursor: grab;}
 .grabbing {cursor: -webkit-grabbing; cursor: grabbing;}
+.pointer{cursor: pointer;}
+.block {display: block;}

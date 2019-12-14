@@ -1,12 +1,12 @@
 'use strict'
 
-const initCanvas = (imgID) => {
-
-    setGlobalVar(imgID)
-
+const initCanvas = (imgID,meme=null,img=null) => {
+    
+    setGlobalVar(imgID,meme,img)
+    document.querySelector('#text').value=''
     drawImg(imgID)
-    addText()
-    renderCanvas()
+    if(!meme)addText()
+     renderCanvas()
 }
 
 const renderCanvas = (downloadMode) => {
@@ -155,3 +155,9 @@ const onMouseUp = (event) => {
     setPrevEvent(null)
     renderCanvas()
 }
+
+const onSaveCanvas=()=>{
+    saveCanvas()
+    console.log('save')
+}
+

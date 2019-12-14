@@ -1,6 +1,7 @@
 .canvas-wrap {
     max-width: 1280px;
     display: none;
+
 }
 
 .canvas-container {
@@ -191,7 +192,7 @@
     .canvas-wrap {
         flex-direction: column;
         align-items: center;
-        display: block !important;
+         /* display: block ;  */
     }
     .controllers-container{
        
@@ -216,7 +217,7 @@
         width:115px;
     }
     .bottom-btn-container>* {
-        margin:7px;
+        margin:8px;
     }
     .general-btn-container>*{
         width:58px;

@@ -20,12 +20,13 @@ const gImgs = [{ id: 1, url: 'img/003.jpg', keywords: ['trump', 'angry', 'speach
 { id: 17, url: 'img/patrick.jpg', keywords: ['old'] },
 { id: 18, url: 'img/putin.jpg', keywords: ['putin', 'president', 'russia'] },
 { id: 19, url: 'img/X-Everywhere.jpg', keywords: ['toy', 'story', 'movie', 'game'] }];
-const gMeme = {
+let gMeme = {
+    id:0,
     selectedImgId: 1, selectedTxtIdx: 0,
     txts: []
 }
 let gCanvas
-let gCtx
+let ctx
 let gImg
 let gFillteredKeyWords = "";
 let gDragMode;
@@ -38,14 +39,21 @@ const resizeCanvas = () => {
     gCanvas.height = elContainer.offsetHeight - 100
 }
 
-const setGlobalVar = (imgID) => {
+const setGlobalVar = (imgID,meme,img) => {
     gCanvas = document.querySelector('#my-canvas');
-    gCtx = gCanvas.getContext('2d')
-    gImg = null
-    gMeme.selectedImgId = imgID
-    gMeme.selectedTxtIdx = 0
+    ctx = gCanvas.getContext('2d')
+    gImg = img
     gDragMode = false
     gPrevEvent = {}
+    if(meme){
+        gMeme=meme
+        gMeme.id=gMeme.id+'q'
+        return
+    }
+    gMeme.selectedImgId = imgID
+    gMeme.selectedTxtIdx = 0
+    gMeme.txts=[]
+    gMeme.id=getRandomID()
 }
 
 const findImgById = (imgID) => {
@@ -77,13 +85,13 @@ const getFillterdKeyWords = (imgs) => {
 
 const drawImg = (imgID) => {
     if (gImg)
-        gCtx.drawImage(gImg, 0, 0, gCanvas.width, gCanvas.height)
+        ctx.drawImage(gImg, 0, 0, gCanvas.width, gCanvas.height)
     else {
         gImg = new Image()
 
         let img = findImgById(imgID)
         gImg.onload = () => {
-            gCtx.drawImage(gImg, 0, 0, gCanvas.width, gCanvas.height)
+            ctx.drawImage(gImg, 0, 0, gCanvas.width, gCanvas.height)
         };
 
         gImg.src = img.url
@@ -94,7 +102,7 @@ const changeTxt = (line) => {
     gMeme.txts[gMeme.selectedTxtIdx].line = line
 }
 const setWidthTxt = (txt) => {
-    gMeme.txts[gMeme.selectedTxtIdx].width = gCtx.measureText(txt).width;
+    gMeme.txts[gMeme.selectedTxtIdx].width = ctx.measureText(txt).width;
 }
 
 const addText = () => {
@@ -112,38 +120,38 @@ const createTxt = (line = '', size = 40, align = 'left', color = 'white', stroke
 
 
 const drawText = (txt, size, align, color, stroke, strokeSize, fontFamely, x, y) => {
-    gCtx.save()
-    gCtx.strokeStyle = stroke
-    gCtx.fillStyle = color
-    gCtx.font = `${size}px ${fontFamely}`;
-    gCtx.textAlign = align;
-    gCtx.lineWidth = strokeSize;
-    gCtx.strokeText(txt, x, y);
-    gCtx.fillText(txt, x, y);
-    gCtx.restore()
+    ctx.save()
+    ctx.strokeStyle = stroke
+    ctx.fillStyle = color
+    ctx.font = `${size}px ${fontFamely}`;
+    ctx.textAlign = align;
+    ctx.lineWidth = strokeSize;
+    ctx.strokeText(txt, x, y);
+    ctx.fillText(txt, x, y);
+    ctx.restore()
 }
 
 const drawTextBG = (txt, font, align, color, stroke, strokeSize, fontFamely, x, y) => {
-    gCtx.save();
-    gCtx.font = `${font}px ${fontFamely}`;
-    gCtx.textAlign = align;
-    gCtx.textBaseline = 'Bottom';
-    gCtx.fillStyle = 'transparent';
-    gCtx.strokeStyle = 'black'
+    ctx.save();
+    ctx.font = `${font}px ${fontFamely}`;
+    ctx.textAlign = align;
+    ctx.textBaseline = 'Bottom';
+    ctx.fillStyle = 'transparent';
+    ctx.strokeStyle = 'black'
     setWidthTxt(txt)
     let width = gMeme.txts[gMeme.selectedTxtIdx].width
-    gCtx.beginPath();
+    ctx.beginPath();
     let xRect=setXbyAling(x,align,width)
-    gCtx.rect(xRect-10 , y - font, width+20 , font+10)
-    gCtx.stroke()
-    gCtx.closePath()
+    ctx.rect(xRect-10 , y - font, width+20 , font+10)
+    ctx.stroke()
+    ctx.closePath()
 
-    gCtx.fillStyle = color;
-    gCtx.strokeStyle = stroke
-    gCtx.lineWidth = strokeSize;
-    gCtx.strokeText(txt, x, y);
-    gCtx.fillText(txt, x, y);
-    gCtx.restore();
+    ctx.fillStyle = color;
+    ctx.strokeStyle = stroke
+    ctx.lineWidth = strokeSize;
+    ctx.strokeText(txt, x, y);
+    ctx.fillText(txt, x, y);
+    ctx.restore();
 }
 
 const setXbyAling=(x,align,width)=>{
@@ -276,4 +284,8 @@ const setPrevEvent = (ev) => {
         gPrevEvent.offsetY = ev.offsetY
     }
 }
-
+const saveCanvas=()=>{
+    let memes=loadFromStorage('memes', [])
+    memes.push(gMeme)
+    saveToStorage('memes', memes)
+}
