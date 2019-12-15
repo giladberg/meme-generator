@@ -23,7 +23,8 @@
             <ul class="main-menu flex clean-list align-baseline ">
                 <li class=""><a class="gallery flex align-center justify-center active" href="#"
                         onclick="backToGallery()">Gallery</a></li>
-                <li class=""><a onclick="memesScreen(event)" class="memes flex align-center justify-center " href="#">Memes</a></li>
+                <li class=""><a onclick="memesScreen(event)" class="memes flex align-center justify-center "
+                        href="#">Memes</a></li>
             </ul>
         </nav>
     </header>
@@ -38,12 +39,13 @@
     </div>
     <div class="canvas-wrap container flex justify-center" hidden>
         <div class="canvas-container">
-            <canvas class="grab" id="my-canvas" width="500" height="500" onmouseup="onMouseUp(event)" onmousemove="onMove(event)" onmousedown="onMouseDown(event)">
+            <canvas class="grab" id="my-canvas" width="500" height="500" onmouseup="onMouseUp(event)"
+                onmousemove="onMove(event)" onmousedown="onMouseDown(event)" ontouchmove="moveTouch(event)">
                 Update your browser to enjoy canvas!
             </canvas>
         </div>
         <div class="controllers-container flex column align-center justify-space-around">
-            <input type="text" placeholder="please add text" onkeyup="onChangeText()" id="text">
+            <input type="text" class="txt-input" placeholder="please add text" onkeyup="onChangeText()" id="text">
             <div class="general-btn-container flex wrap">
                 <button class="up-btn" onclick="onChangeLine(-10)"></button>
                 <button class="down-btn" onclick="onChangeLine(10)"></button>
@@ -54,18 +56,20 @@
             <div class="text-btn-container flex wrap justify-center align-center ">
                 <button class="increase" onclick="onChangeFontSize(1)"></button>
                 <button class="decrease" onclick="onChangeFontSize(-1)"></button>
-                <button class="text-align-left" onclick="onChangeAling('left')"></button>
-                <button class="text-align-center" onclick="onChangeAling('center')"></button>
-                <button class="text-align-right" onclick="onChangeAling('right')"></button>
-                <input class="font-famely" list="font-famely" value="Impact" onchange="onChangeFontFamely()">
+                <button class="text-align-left" onclick="onChangeAlign('left')"></button>
+                <button class="text-align-center" onclick="onChangeAlign('center')"></button>
+                <button class="text-align-right" onclick="onChangeAlign('right')"></button>
+                <input id="font-list" class="font-famely" list="font-famely" value="Impact" onchange="onChangeFontFamely()">
                 <datalist id="font-famely">
                     <option value="Impact">
                     <option value="Ariel">
                     <option value="Helvetica">
                 </datalist>
                 <button class="small" onclick="onChangeStrokeSize()"></button>
+                <button><label for="color" class="color"></label></button>
                 <input type="color" class="color" value="#ffffff" id="color" onchange="onChangeColor()" />
-                <input type="color" class="color" id="stroke-color" onchange="onChangeStrokeColor()" />
+                <button><label for="stroke-color" class="stroke-color"></label></button>
+                <input type="color" class="stroke-color" id="stroke-color" onchange="onChangeStrokeColor()" />
             </div>
             <div class="bottom-btn-container flex wrap justify-center">
                 <form class="share flex justify-center align-center" action="" method="POST"
@@ -76,7 +80,7 @@
                 </form>
                 <a class="download flex justify-center align-center " href="#" onclick="onDownload(this)"
                     download="">Download</a>
-                    <button onclick="onSaveCanvas()">save</button> 
+                <button class="save" onclick="onSaveCanvas()">save</button>
             </div>
         </div>
 

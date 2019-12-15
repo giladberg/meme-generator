@@ -73,6 +73,7 @@
     cursor: pointer;
     opacity:0.67;
 }
+
 .picture:hover{
     opacity:1;
 }
@@ -195,10 +196,14 @@
     }
     .second-nav {
         flex-wrap: wrap;
+        justify-content: center;
     }
     .second-nav input {
         width: 100%;
         margin-bottom: 20px;
+    }
+    .more{
+        margin-top: 17px;
     }
     .gallery-container {
         max-width: 650px;
@@ -207,8 +212,12 @@
     .picture {
         flex-basis: 42%;
     }
+    .picture:nth-child(odd) {
+        margin-left:0px
+      }
     .gallery-content {
         margin-top: 20px;
         margin-left: 0;
+        justify-content: center;
     }
 }

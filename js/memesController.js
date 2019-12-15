@@ -3,6 +3,8 @@
 const memesScreen = (e) => {
     e.preventDefault()
     setMemesData()
+    document.querySelector('.canvas-wrap').style="display:none";
+    document.querySelector('.gallery-container').style="display:flex;";
     document.querySelector('.gallery').classList.remove('active');
     document.querySelector('.memes').classList.add('active');
     renderMemes()

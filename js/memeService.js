@@ -113,39 +113,37 @@ const addText = () => {
     gMeme.txts.push(newTxt)
 }
 
-const createTxt = (line = '', size = 40, align = 'left', color = 'white', stroke = 'black', strokeSize = 4, fontFamely = 'impact', offsetX = gCanvas.width / 2, offsetY = gCanvas.height / 2) => {
-    return { line, size, align, color, stroke, strokeSize, fontFamely, offsetX, offsetY }
+const createTxt = (line = '', size = 40,color = 'white', stroke = 'black', strokeSize = 4, fontFamely = 'impact', offsetX = gCanvas.width / 2, offsetY = gCanvas.height / 2) => {
+    return { line, size, color, stroke, strokeSize, fontFamely, offsetX, offsetY }
 }
 
 
 
-const drawText = (txt, size, align, color, stroke, strokeSize, fontFamely, x, y) => {
+const drawText = (txt, size, color, stroke, strokeSize, fontFamely, x, y) => {
     ctx.save()
     ctx.strokeStyle = stroke
     ctx.fillStyle = color
     ctx.font = `${size}px ${fontFamely}`;
-    ctx.textAlign = align;
+    ctx.textAlign = 'left';
     ctx.lineWidth = strokeSize;
     ctx.strokeText(txt, x, y);
     ctx.fillText(txt, x, y);
     ctx.restore()
 }
 
-const drawTextBG = (txt, font, align, color, stroke, strokeSize, fontFamely, x, y) => {
+const drawTextBG = (txt, font, color, stroke, strokeSize, fontFamely, x, y) => {
     ctx.save();
     ctx.font = `${font}px ${fontFamely}`;
-    ctx.textAlign = align;
+    ctx.textAlign = 'left';
     ctx.textBaseline = 'Bottom';
     ctx.fillStyle = 'transparent';
     ctx.strokeStyle = 'black'
     setWidthTxt(txt)
     let width = gMeme.txts[gMeme.selectedTxtIdx].width
     ctx.beginPath();
-    let xRect=setXbyAling(x,align,width)
-    ctx.rect(xRect-10 , y - font, width+20 , font+10)
+    ctx.rect(x-10 , y - font, width+20 , font+10)
     ctx.stroke()
     ctx.closePath()
-
     ctx.fillStyle = color;
     ctx.strokeStyle = stroke
     ctx.lineWidth = strokeSize;
@@ -186,7 +184,9 @@ const deleteTxt = () => {
 const getCurrentTxt = () => {
     return gMeme.txts[gMeme.selectedTxtIdx].line
 }
-
+const getCurrentfontFamely = ()=>{
+    return gMeme.txts[gMeme.selectedTxtIdx].fontFamely
+}
 const setColor = (color) => {
     gMeme.txts[gMeme.selectedTxtIdx].color = color;
 }
@@ -204,8 +204,12 @@ const toggleStroke = () => {
     else gMeme.txts[gMeme.selectedTxtIdx].strokeSize = 4
 }
 
-const onChangeAlign = (align) => {
-    gMeme.txts[gMeme.selectedTxtIdx].align = align
+const changeAlign = (align) => {
+    let txt=gMeme.txts[gMeme.selectedTxtIdx]
+    if(align==="left")txt.offsetX = 10
+    else if(align==="right")txt.offsetX =  gCanvas.width-txt.width
+    else txt.offsetX=(gCanvas.width/2)-(txt.width/2)
+    
 }
 
 const getTopKeyWords = () => {
@@ -271,7 +275,7 @@ const moveTxt = (ev) => {
     if (gPrevEvent.offsetX) {
         gMeme.txts[gMeme.selectedTxtIdx].offsetX += getDiff(gPrevEvent.offsetX, ev.offsetX)
         gMeme.txts[gMeme.selectedTxtIdx].offsetY += getDiff(gPrevEvent.offsetY, ev.offsetY)
-    }
+    }   
     setPrevEvent(ev)
 }
 const setPrevEvent = (ev) => {

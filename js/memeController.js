@@ -13,8 +13,8 @@ const renderCanvas = (downloadMode) => {
     const txts = getTxts()
     drawImg()
     txts.forEach((txt, index) => {
-        if (getCurrSelectedTxtIdx() === index && !downloadMode) drawTextBG(txt.line, txt.size, txt.align, txt.color, txt.stroke, txt.strokeSize, txt.fontFamely, txt.offsetX, txt.offsetY)
-        else drawText(txt.line, txt.size, txt.align, txt.color, txt.stroke, txt.strokeSize, txt.fontFamely, txt.offsetX, txt.offsetY)
+        if (getCurrSelectedTxtIdx() === index && !downloadMode) drawTextBG(txt.line, txt.size, txt.color, txt.stroke, txt.strokeSize, txt.fontFamely, txt.offsetX, txt.offsetY)
+        else drawText(txt.line, txt.size, txt.color, txt.stroke, txt.strokeSize, txt.fontFamely, txt.offsetX, txt.offsetY)
     })
 
 }
@@ -44,21 +44,26 @@ const onAddText = () => {
 }
 
 const onSwitchText = () => {
+  
+    changeSelectedTxtIdx()
+    changeInputsValue()
+    renderCanvas()
+}
+
+const changeInputsValue=()=>{
     let elText = document.querySelector('#text')
+    let elFontList=document.querySelector('#font-list')
     if (getTxts().length === 0) {
         elText.value = ''
         addText()
-        return
     }
-    changeSelectedTxtIdx()
+    elFontList.value=getCurrentfontFamely()
     elText.value = getCurrentTxt()
-    renderCanvas()
 }
 
 const onDelete = () => {
     deleteTxt()
     onSwitchText()
-    renderCanvas()
 }
 const onChangeColor = () => {
     let elColor = document.querySelector('#color')
@@ -91,8 +96,8 @@ const onChangeStrokeSize = () => {
     renderCanvas()
 }
 
-const onChangeAling = (align) => {
-    onChangeAlign(align)
+const onChangeAlign = (align) => {
+    changeAlign(align)
     renderCanvas()
 }
 
@@ -132,6 +137,7 @@ function doUploadImg(elForm, onSuccess) {
 const onMouseDown = (event) => {
     if (checkIfTxtInRange(event)) {
         setDragMode(true)
+        changeInputsValue()
     }
     renderCanvas()
 }
@@ -143,6 +149,16 @@ const onMove = (event) => {
         moveTxt(event)
         renderCanvas()
     }
+}
+
+const moveTouch=(ev)=>{
+    let event ={offsetX:ev.touches[0].clientX-gCanvas.offsetLeft,offsetY:ev.touches[0].clientY-gCanvas.offsetTop}
+    if(checkIfTxtInRange(event)){
+        moveTxt(event)
+    }else{
+        setPrevEvent(null)
+    }
+    renderCanvas()
 }
 
 const onMouseUp = (event) => {
@@ -158,6 +174,5 @@ const onMouseUp = (event) => {
 
 const onSaveCanvas=()=>{
     saveCanvas()
-    console.log('save')
 }
 
