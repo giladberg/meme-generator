@@ -152,6 +152,7 @@ const onMove = (event) => {
 }
 
 const moveTouch=(ev)=>{
+    ev.preventDefault()
     let event ={offsetX:ev.touches[0].clientX-gCanvas.offsetLeft,offsetY:ev.touches[0].clientY-gCanvas.offsetTop}
     if(checkIfTxtInRange(event)){
         moveTxt(event)
