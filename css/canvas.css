@@ -65,6 +65,9 @@
     content: url(../img/buttons/+.png);
 }
 
+
+
+
 .switch-btn {
     width: 57px;
     height: 53px;
@@ -179,12 +182,33 @@
 }
 
 .emoji-container {
+    position: relative;
     width: 420px;
     height: 91px;
     border-radius: 45px;
     margin-top:10px;
     background-color: #ffffff;
 }
+.emoji-container>*{
+    cursor: pointer;
+}
+.arrow-btn{
+    width:3%;
+    position: absolute;
+    top:40%;
+}
+
+.emoji-container  .left{
+    left:15px;
+}
+.emoji-container  .right{   
+    right:15px;
+}
+.stricker{
+    width:20%;
+    height: 90%;
+}
+
 
 .bottom-btn-container>* {
     color: white;
@@ -273,5 +297,10 @@
         width: 54px;
         height: 45px;
         margin-left: 8px;
+    }
+
+    .emoji-container {
+        width: 320px;
+        
     }
 }

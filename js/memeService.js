@@ -2,6 +2,12 @@
 
 
 const gKeywords = { 'happy': 12, 'funny puk': 1 }
+const gStickers = [{ id: 1, url: 'img/gilad.webp' },
+{ id: 2, url: 'img/turtule.webp' },
+{ id: 3, url: 'img/supreme.webp' },
+{ id: 4, url: 'img/louis.webp' },
+{ id: 5, url: 'img/pothead.webp' }]
+let gIndexSticker = 0
 const gImgs = [{ id: 1, url: 'img/003.jpg', keywords: ['trump', 'angry', 'speach'] },
 { id: 2, url: 'img/004.jpg', keywords: ['dog', 'cute', 'happy', 'love', 'kiss'] },
 { id: 3, url: 'img/005.jpg', keywords: ['dog', 'baby', 'happy', 'smile'] },
@@ -21,7 +27,7 @@ const gImgs = [{ id: 1, url: 'img/003.jpg', keywords: ['trump', 'angry', 'speach
 { id: 18, url: 'img/putin.jpg', keywords: ['putin', 'president', 'russia'] },
 { id: 19, url: 'img/X-Everywhere.jpg', keywords: ['toy', 'story', 'movie', 'game'] }];
 let gMeme = {
-    id:0,
+    id: 0,
     selectedImgId: 1, selectedTxtIdx: 0,
     txts: []
 }
@@ -39,21 +45,22 @@ const resizeCanvas = () => {
     gCanvas.height = elContainer.offsetHeight - 100
 }
 
-const setGlobalVar = (imgID,meme,img) => {
+const setGlobalVar = (imgID, meme, img) => {
     gCanvas = document.querySelector('#my-canvas');
     ctx = gCanvas.getContext('2d')
     gImg = img
     gDragMode = false
     gPrevEvent = {}
-    if(meme){
-        gMeme=meme
-        gMeme.id=gMeme.id+'q'
+    gIndexSticker = 0
+    if (meme) {
+        gMeme = meme
+        gMeme.id = gMeme.id + 'q'
         return
     }
     gMeme.selectedImgId = imgID
     gMeme.selectedTxtIdx = 0
-    gMeme.txts=[]
-    gMeme.id=getRandomID()
+    gMeme.txts = []
+    gMeme.id = getRandomID()
 }
 
 const findImgById = (imgID) => {
@@ -66,6 +73,25 @@ const getGalleryData = () => {
     let imgs = gImgs
     imgs = getFillterdKeyWords(imgs)
     return imgs
+}
+
+const getCurrentElementCanvas=()=>{
+    return gMeme.txts[gMeme.selectedTxtIdx]
+}
+
+const getEmojiesToRender = () => {
+    let stickers = []
+    for (let i = 0; i < 4; i++) {
+        stickers.push(gStickers[(gIndexSticker + i) % gStickers.length])
+    }
+    return stickers
+}
+
+const changeIndexSticker = (diff) => {
+
+    gIndexSticker += diff
+    if (gIndexSticker < 0) gIndexSticker = gStickers.length - 1
+    if (gIndexSticker === gStickers.length) gIndexSticker = 0
 }
 
 const getTxts = () => { return gMeme.txts }
@@ -98,6 +124,8 @@ const drawImg = (imgID) => {
     }
 }
 
+
+
 const changeTxt = (line) => {
     gMeme.txts[gMeme.selectedTxtIdx].line = line
 }
@@ -113,10 +141,72 @@ const addText = () => {
     gMeme.txts.push(newTxt)
 }
 
-const createTxt = (line = '', size = 40,color = 'white', stroke = 'black', strokeSize = 4, fontFamely = 'impact', offsetX = gCanvas.width / 2, offsetY = gCanvas.height / 2) => {
-    return { line, size, color, stroke, strokeSize, fontFamely, offsetX, offsetY }
+
+const createTxt = (line = '', size = 40, color = 'white', stroke = 'black', strokeSize = 4, fontFamely = 'impact', offsetX = gCanvas.width / 2, offsetY = gCanvas.height / 2, type = "txt") => {
+    return { line, size, color, stroke, strokeSize, fontFamely, offsetX, offsetY, type }
 }
 
+const addStiker = id => {
+    gMeme.selectedTxtIdx = gMeme.txts.length
+    let sticker = findStickerById(id)
+    let newSticker = createSticker(sticker.url)
+    gMeme.txts.push(newSticker)
+}
+
+const createSticker = (url) => {
+    let type = "sticker"
+    let offsetX = 50
+    let offsetY = 50
+    let width = 100
+    let size = 100
+    let img = new Image()
+    img.src = url
+    img.onload = () => {
+        ctx.save();
+        ctx.drawImage(img, offsetX, offsetY, width, size)
+        ctx.restore();
+    }
+    return { type, offsetX, offsetY, width, size, img }
+}
+
+const drawSticker = (sticker) => {
+    ctx.save();
+    if(!sticker.img.src){
+        let src=sticker.img
+        sticker.img=new Image()
+        sticker.img.src=src
+        sticker.img.onload=()=>{
+            ctx.drawImage(sticker.img, sticker.offsetX, sticker.offsetY, sticker.width, sticker.size)
+        }
+
+    }
+    else{
+        ctx.drawImage(sticker.img, sticker.offsetX, sticker.offsetY, sticker.width, sticker.size)
+    }
+   
+    ctx.restore();
+}
+const drawstickerBG = (sticker) => {
+    ctx.save();
+
+    ctx.textBaseline = 'Bottom';
+    drawSticker(sticker)
+    ctx.fillStyle = 'transparent';
+    ctx.strokeStyle = 'black'
+    ctx.beginPath();
+    ctx.rect(sticker.offsetX - 10, sticker.offsetY - 10, sticker.width + 20, sticker.size + 20)
+    ctx.stroke()
+    ctx.closePath()
+    ctx.restore();
+}
+
+
+
+const findStickerById = (stickerID) => {
+    return gStickers.find((sticker) => {
+        return sticker.id === stickerID
+    });
+}
 
 
 const drawText = (txt, size, color, stroke, strokeSize, fontFamely, x, y) => {
@@ -141,7 +231,7 @@ const drawTextBG = (txt, font, color, stroke, strokeSize, fontFamely, x, y) => {
     setWidthTxt(txt)
     let width = gMeme.txts[gMeme.selectedTxtIdx].width
     ctx.beginPath();
-    ctx.rect(x-10 , y - font, width+20 , font+10)
+    ctx.rect(x - 10, y - font, width + 20, font + 10)
     ctx.stroke()
     ctx.closePath()
     ctx.fillStyle = color;
@@ -152,9 +242,9 @@ const drawTextBG = (txt, font, color, stroke, strokeSize, fontFamely, x, y) => {
     ctx.restore();
 }
 
-const setXbyAling=(x,align,width)=>{
-    if(align==='center')x=x-(width/2)
-    else if(align==='right')x=x-width
+const setXbyAling = (x, align, width) => {
+    if (align === 'center') x = x - (width / 2)
+    else if (align === 'right') x = x - width
     return x
 }
 
@@ -184,7 +274,7 @@ const deleteTxt = () => {
 const getCurrentTxt = () => {
     return gMeme.txts[gMeme.selectedTxtIdx].line
 }
-const getCurrentfontFamely = ()=>{
+const getCurrentfontFamely = () => {
     return gMeme.txts[gMeme.selectedTxtIdx].fontFamely
 }
 const setColor = (color) => {
@@ -205,11 +295,11 @@ const toggleStroke = () => {
 }
 
 const changeAlign = (align) => {
-    let txt=gMeme.txts[gMeme.selectedTxtIdx]
-    if(align==="left")txt.offsetX = 10
-    else if(align==="right")txt.offsetX =  gCanvas.width-txt.width
-    else txt.offsetX=(gCanvas.width/2)-(txt.width/2)
-    
+    let txt = gMeme.txts[gMeme.selectedTxtIdx]
+    if (align === "left") txt.offsetX = 10
+    else if (align === "right") txt.offsetX = gCanvas.width - txt.width
+    else txt.offsetX = (gCanvas.width / 2) - (txt.width / 2)
+
 }
 
 const getTopKeyWords = () => {
@@ -261,13 +351,23 @@ const checkDragMode = () => {
     return gDragMode
 }
 const checkIfTxtInRange = (ev) => {
+    
     for (let i = 0; i < gMeme.txts.length; i++) {
         let txt = gMeme.txts[i]
-        if (txt.offsetX <= ev.offsetX && (txt.offsetX + txt.width) >= ev.offsetX && txt.offsetY >= ev.offsetY && txt.offsetY - txt.size <= ev.offsetY) {
-            changeSelectedTxtIdx(i)
-            return true
+        if (txt.type === 'txt') {
+            if (txt.offsetX <= ev.offsetX && (txt.offsetX + txt.width) >= ev.offsetX && txt.offsetY >= ev.offsetY && txt.offsetY - txt.size <= ev.offsetY) {
+                changeSelectedTxtIdx(i)
+                return true
+            }
+        }
+        else if(txt.type==='sticker'){
+            if(txt.offsetX-7<=ev.offsetX && txt.offsetX+10+txt.width>=ev.offsetX&&txt.offsetY-7<=ev.offsetY&&txt.offsetY+10+txt.size>=ev.offsetY){
+                changeSelectedTxtIdx(i)
+                return true
+            }
         }
     }
+
     return false
 }
 
@@ -275,7 +375,7 @@ const moveTxt = (ev) => {
     if (gPrevEvent.offsetX) {
         gMeme.txts[gMeme.selectedTxtIdx].offsetX += getDiff(gPrevEvent.offsetX, ev.offsetX)
         gMeme.txts[gMeme.selectedTxtIdx].offsetY += getDiff(gPrevEvent.offsetY, ev.offsetY)
-    }   
+    }
     setPrevEvent(ev)
 }
 const setPrevEvent = (ev) => {
@@ -288,8 +388,17 @@ const setPrevEvent = (ev) => {
         gPrevEvent.offsetY = ev.offsetY
     }
 }
-const saveCanvas=()=>{
-    let memes=loadFromStorage('memes', [])
+const saveCanvas = () => {
+    let memes = loadFromStorage('memes', [])
+    setImgToSave()
     memes.push(gMeme)
     saveToStorage('memes', memes)
+}
+
+const setImgToSave=()=>{
+    gMeme.txts.forEach((element,index)=>{
+        if(element.type==="sticker"){
+            element.img=element.img.src
+        }
+    })
 }

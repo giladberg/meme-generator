@@ -1,22 +1,50 @@
 'use strict'
 
-const initCanvas = (imgID,meme=null,img=null) => {
-    
-    setGlobalVar(imgID,meme,img)
-    document.querySelector('#text').value=''
+const initCanvas = (imgID, meme = null, img = null) => {
+    setGlobalVar(imgID, meme, img)
+    document.querySelector('#text').value = ''
     drawImg(imgID)
-    if(!meme)addText()
-     renderCanvas()
+    renderStickers()
+    if (!meme) addText()
+    renderCanvas()
 }
 
 const renderCanvas = (downloadMode) => {
     const txts = getTxts()
     drawImg()
     txts.forEach((txt, index) => {
-        if (getCurrSelectedTxtIdx() === index && !downloadMode) drawTextBG(txt.line, txt.size, txt.color, txt.stroke, txt.strokeSize, txt.fontFamely, txt.offsetX, txt.offsetY)
-        else drawText(txt.line, txt.size, txt.color, txt.stroke, txt.strokeSize, txt.fontFamely, txt.offsetX, txt.offsetY)
+        if (txt.type === 'txt') {
+            if (getCurrSelectedTxtIdx() === index && !downloadMode) drawTextBG(txt.line, txt.size, txt.color, txt.stroke, txt.strokeSize, txt.fontFamely, txt.offsetX, txt.offsetY)
+            else drawText(txt.line, txt.size, txt.color, txt.stroke, txt.strokeSize, txt.fontFamely, txt.offsetX, txt.offsetY)
+        }
+        else if(txt.type==='sticker'){
+            if (getCurrSelectedTxtIdx() === index && !downloadMode)drawstickerBG(txt)
+            else drawSticker(txt)
+        }
+        
+
     })
 
+}
+
+const renderStickers = () => {
+    let elEmojiContainer = document.querySelector('.emoji-container')
+    let stickers = getEmojiesToRender()
+    let strHtml = ` <img class="arrow-btn left" src="./img/buttons/left-btn.png" alt="" onclick="onChangeIndexSticker(-1)" >
+    <img class="arrow-btn right" src="./img/buttons/right-btn.png" alt="" onclick="onChangeIndexSticker(1)" >`
+    let strImgs = stickers.map((sticker) => `<img class="stricker" src="${sticker.url}" alt="WebP rules." onclick="onSelectedSticker(${sticker.id})"/>`)
+    strHtml += strImgs.join('')
+    elEmojiContainer.innerHTML = strHtml;
+}
+
+const onSelectedSticker = (id) => {
+    addStiker(id)
+    renderCanvas()
+}
+
+const onChangeIndexSticker = (diff) => {
+    changeIndexSticker(diff)
+    renderStickers()
 }
 
 const onChangeText = () => {
@@ -44,20 +72,24 @@ const onAddText = () => {
 }
 
 const onSwitchText = () => {
-  
+
     changeSelectedTxtIdx()
     changeInputsValue()
     renderCanvas()
 }
 
-const changeInputsValue=()=>{
+const changeInputsValue = () => {
     let elText = document.querySelector('#text')
-    let elFontList=document.querySelector('#font-list')
+    let elFontList = document.querySelector('#font-list')
+    if(getCurrentElementCanvas().type==='sticker'){
+        elText.value = ''
+        return
+    }
     if (getTxts().length === 0) {
         elText.value = ''
         addText()
     }
-    elFontList.value=getCurrentfontFamely()
+    elFontList.value = getCurrentfontFamely()
     elText.value = getCurrentTxt()
 }
 
@@ -151,12 +183,12 @@ const onMove = (event) => {
     }
 }
 
-const moveTouch=(ev)=>{
+const moveTouch = (ev) => {
     ev.preventDefault()
-    let event ={offsetX:ev.touches[0].clientX-gCanvas.offsetLeft,offsetY:ev.touches[0].clientY-gCanvas.offsetTop}
-    if(checkIfTxtInRange(event)){
+    let event = { offsetX: ev.touches[0].clientX - gCanvas.offsetLeft, offsetY: ev.touches[0].clientY - gCanvas.offsetTop }
+    if (checkIfTxtInRange(event)) {
         moveTxt(event)
-    }else{
+    } else {
         setPrevEvent(null)
     }
     renderCanvas()
@@ -173,7 +205,8 @@ const onMouseUp = (event) => {
     renderCanvas()
 }
 
-const onSaveCanvas=()=>{
+const onSaveCanvas = () => {
+   
     saveCanvas()
 }
 
